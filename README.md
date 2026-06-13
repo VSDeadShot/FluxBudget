@@ -2,7 +2,7 @@
 
 > A state-of-the-art, beautifully designed personal finance tracker built with Electron and React.
 
-![FluxBudget Showcase](https://via.placeholder.com/1200x600.png?text=FluxBudget+Showcase)
+![FluxBudget Showcase](public/showcase.png)
 
 ## 🌟 Features
 
