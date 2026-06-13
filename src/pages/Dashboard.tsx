@@ -1,0 +1,227 @@
+import { useEffect, useState } from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { motion } from 'framer-motion';
+import AnimatedNumber from '../components/AnimatedNumber';
+import { getCategoryIcon } from '../utils/icons';
+import type { Category, Transaction } from '../types';
+
+const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#f43f5e', '#ef4444', '#8b5cf6', '#6366f1'];
+
+export default function Dashboard({ currentMonth }: { currentMonth: string }) {
+  const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [filterBucket, setFilterBucket] = useState<string>('All');
+
+  useEffect(() => {
+    async function loadData() {
+      if (!window.electronAPI) return;
+      const [txData, catData] = await Promise.all([
+        window.electronAPI.getTransactions(),
+        window.electronAPI.getCategories()
+      ]);
+      setAllTransactions(txData);
+      setCategories(catData);
+    }
+    loadData();
+    loadData();
+  }, []);
+
+  const transactions = allTransactions.filter(tx => tx.date.startsWith(currentMonth));
+
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
+  const balance = totalIncome - totalExpense;
+
+  const expenseData = categories
+    .filter(c => c.type === 'expense')
+    .map(c => ({
+      name: c.name,
+      value: transactions.filter(t => t.categoryId === c.id).reduce((acc, t) => acc + t.amount, 0)
+    }))
+    .filter(d => d.value > 0);
+
+  // Dynamic Bucket Calculations
+  function getSpentByBucket(bucket: string) {
+    const catIds = categories.filter(c => c.allocationBucket === bucket).map(c => c.id);
+    return transactions.filter(t => catIds.includes(t.categoryId)).reduce((sum, t) => sum + t.amount, 0);
+  }
+
+  const spentEssentials = getSpentByBucket('Essentials');
+  const spentRewards = getSpentByBucket('Rewards');
+  const spentGrowth = getSpentByBucket('Growth');
+  const spentStability = getSpentByBucket('Stability');
+
+  const budgetEssentials = totalIncome * 0.5;
+  const budgetRewards = totalIncome * 0.1;
+  const budgetGrowth = totalIncome * 0.25;
+  const budgetStability = totalIncome * 0.15;
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.3, ease: 'easeOut' }}
+      className="max-w-6xl mx-auto pb-12"
+    >
+      <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-2 transition-colors">Dashboard</h1>
+      <p className="text-gray-500 dark:text-gray-400 mb-10 transition-colors">Welcome back! Here's your financial overview.</p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-blue-600 dark:bg-blue-900/40 p-8 rounded-3xl shadow-xl shadow-blue-200/50 dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-blue-500 dark:border-blue-800/60 relative overflow-hidden text-white transition-colors cursor-default">
+          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+          <p className="text-blue-100 font-medium mb-2 relative z-10">Total Balance</p>
+          <p className="text-4xl font-bold relative z-10 text-white">Rs <AnimatedNumber value={balance} /></p>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 transition-colors cursor-default">
+          <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mb-4">
+            <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+          </div>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">Total Income</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">Rs <AnimatedNumber value={totalIncome} /></p>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 transition-colors cursor-default">
+          <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center mb-4">
+            <svg className="w-6 h-6 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+          </div>
+          <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">Total Expenses</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">Rs <AnimatedNumber value={totalExpense} /></p>
+        </motion.div>
+      </div>
+
+      <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 mb-10 transition-colors cursor-default">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Income Allocation Model (25/10/15/50)</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
+            <p className="text-emerald-600 dark:text-emerald-400 font-medium mb-1">Safe to Spend (60%)</p>
+            <p className="text-3xl font-bold text-emerald-700 dark:emerald-300 mb-4">Rs {((budgetEssentials + budgetRewards) - (spentEssentials + spentRewards)).toFixed(2)} left</p>
+            <div className="space-y-2 text-sm text-emerald-800 dark:text-emerald-200/70 border-t border-emerald-200/50 dark:border-emerald-800/50 pt-4">
+              <div className="flex justify-between">
+                <span>Essentials (50%)</span>
+                <span>Spent: {spentEssentials} / {budgetEssentials}</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetEssentials - spentEssentials).toFixed(2)} left</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Rewards (10%)</span>
+                <span>Spent: {spentRewards} / {budgetRewards}</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetRewards - spentRewards).toFixed(2)} left</span>
+              </div>
+            </div>
+          </div>
+          <div className="bg-gray-50 dark:bg-gray-900/20 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/30">
+            <p className="text-blue-600 dark:text-blue-400 font-medium mb-1">Invest & Save (40%)</p>
+            <p className="text-3xl font-bold text-gray-700 dark:text-gray-300 mb-4">Rs {((budgetGrowth + budgetStability) - (spentGrowth + spentStability)).toFixed(2)} left</p>
+            <div className="space-y-2 text-sm text-gray-800 dark:text-gray-200/70 border-t border-gray-200/50 dark:border-gray-800/50 pt-4">
+              <div className="flex justify-between">
+                <span>Growth (25%)</span>
+                <span>Spent: {spentGrowth} / {budgetGrowth}</span>
+                <span className="font-bold text-gray-600 dark:text-gray-400">Rs {(budgetGrowth - spentGrowth).toFixed(2)} left</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Stability (15%)</span>
+                <span>Spent: {spentStability} / {budgetStability}</span>
+                <span className="font-bold text-gray-600 dark:text-gray-400">Rs {(budgetStability - spentStability).toFixed(2)} left</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 h-[32rem] transition-colors cursor-default">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-8">Expenses by Category</h2>
+          {expenseData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={expenseData}
+                  cx="50%"
+                  cy="45%"
+                  innerRadius={110}
+                  outerRadius={160}
+                  paddingAngle={4}
+                  dataKey="value"
+                  stroke="none"
+                  cornerRadius={8}
+                >
+                  {expenseData.map((_entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <RechartsTooltip 
+                  formatter={(value: any) => `Rs ${Number(value).toFixed(2)}`}
+                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', padding: '12px 20px', fontWeight: 600 }}
+                />
+                <Legend verticalAlign="bottom" height={40} iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex flex-col h-full items-center justify-center text-gray-400 dark:text-gray-500 pb-12">
+              <svg className="w-16 h-16 mb-4 text-gray-200 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path></svg>
+              <p>No expenses logged yet.</p>
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 h-[32rem] transition-colors overflow-hidden flex flex-col">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Recent Transactions</h2>
+            <div className="flex flex-wrap gap-2">
+              {['All', 'Essentials', 'Rewards', 'Growth', 'Stability'].map(bucket => (
+                <button
+                  key={bucket}
+                  onClick={() => setFilterBucket(bucket)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterBucket === bucket ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 dark:shadow-none' : 'bg-white/50 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-slate-700'}`}
+                >
+                  {bucket}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-4">
+              {(() => {
+                const recentTx = transactions
+                  .filter(t => {
+                    if (filterBucket === 'All') return true;
+                    const cat = categories.find(c => c.id === t.categoryId);
+                    return cat?.allocationBucket === filterBucket;
+                  })
+                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                  .slice(0, 8);
+
+                if (recentTx.length === 0) {
+                  return (
+                    <div className="flex flex-col h-full items-center justify-center text-gray-400 dark:text-gray-500 pt-20">
+                      <p>No recent transactions in this category.</p>
+                    </div>
+                  );
+                }
+
+                return recentTx.map(tx => {
+                  const Icon = getCategoryIcon(tx.categoryName || '');
+                  return (
+                    <motion.div whileHover={{ scale: 1.02, x: 4 }} key={tx.id} className="flex items-center justify-between p-4 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700/50 transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tx.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'}`}>
+                          <Icon size={20} />
+                        </div>
+                        <div>
+                          <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.description}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{tx.date} • {tx.categoryName}</p>
+                        </div>
+                      </div>
+                      <p className={`font-bold ${tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
+                        {tx.type === 'income' ? '+' : '-'} Rs {tx.amount.toFixed(2)}
+                      </p>
+                    </motion.div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
