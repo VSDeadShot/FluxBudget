@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
 import { motion } from 'framer-motion';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import AnimatedNumber from '../components/AnimatedNumber';
 import { getCategoryIcon } from '../utils/icons';
 import type { Category, Transaction } from '../types';
@@ -67,160 +68,137 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
       <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-2 transition-colors">Dashboard</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-10 transition-colors">Welcome back! Here's your financial overview.</p>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <motion.div whileHover={{ scale: 1.02 }} className="bg-blue-600 dark:bg-blue-900/40 p-8 rounded-3xl shadow-xl shadow-blue-200/50 dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-blue-500 dark:border-blue-800/60 relative overflow-hidden text-white transition-colors cursor-default">
-          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
-          <p className="text-blue-100 font-medium mb-2 relative z-10">Total Balance</p>
-          <p className="text-4xl font-bold relative z-10 text-white">Rs <AnimatedNumber value={balance} /></p>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[minmax(140px,_auto)]">
+        
+        {/* Row 1: Top Metrics */}
+        <motion.div whileHover={{ scale: 1.02 }} className="md:col-span-4 bg-slate-900 dark:bg-[#0a0a0a] p-8 rounded-[32px] shadow-[0_0_30px_rgba(59,130,246,0.15)] border border-blue-500/30 relative overflow-hidden text-white transition-all flex flex-col justify-center">
+          <div className="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-blue-500 opacity-20 rounded-full blur-3xl"></div>
+          <p className="text-blue-200/80 font-medium mb-2 relative z-10 text-sm tracking-wide uppercase">Total Balance</p>
+          <p className="text-5xl font-extrabold relative z-10 text-white tracking-tight">Rs <AnimatedNumber value={balance} /></p>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 transition-colors cursor-default">
-          <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center mb-4">
-            <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+        
+        <motion.div whileHover={{ scale: 1.02 }} className="md:col-span-4 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col justify-center">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-500/10 rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 font-bold text-xs tracking-widest uppercase">Total Income</p>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">Total Income</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">Rs <AnimatedNumber value={totalIncome} /></p>
+          <p className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Rs <AnimatedNumber value={totalIncome} /></p>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 transition-colors cursor-default">
-          <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-2xl flex items-center justify-center mb-4">
-            <svg className="w-6 h-6 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg>
+        
+        <motion.div whileHover={{ scale: 1.02 }} className="md:col-span-4 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col justify-center">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-rose-100 dark:bg-rose-500/10 rounded-lg flex items-center justify-center">
+              <TrendingDown className="w-4 h-4 text-rose-600 dark:text-rose-500" />
+            </div>
+            <p className="text-gray-500 dark:text-gray-400 font-bold text-xs tracking-widest uppercase">Total Expenses</p>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 font-medium mb-1">Total Expenses</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">Rs <AnimatedNumber value={totalExpense} /></p>
+          <p className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Rs <AnimatedNumber value={totalExpense} /></p>
         </motion.div>
-      </div>
 
-      <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 mb-10 transition-colors cursor-default">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Income Allocation Model (25/10/15/50)</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-emerald-50 dark:bg-emerald-900/20 p-6 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
-            <p className="text-emerald-600 dark:text-emerald-400 font-medium mb-1">Safe to Spend (60%)</p>
-            <p className="text-3xl font-bold text-emerald-700 dark:emerald-300 mb-4">Rs {((budgetEssentials + budgetRewards) - (spentEssentials + spentRewards)).toFixed(2)} left</p>
-            <div className="space-y-2 text-sm text-emerald-800 dark:text-emerald-200/70 border-t border-emerald-200/50 dark:border-emerald-800/50 pt-4">
-              <div className="flex justify-between">
-                <span>Essentials (50%)</span>
-                <span>Spent: {spentEssentials} / {budgetEssentials}</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetEssentials - spentEssentials).toFixed(2)} left</span>
+        {/* Row 2/3: Complex Layout */}
+        <motion.div whileHover={{ scale: 1.005 }} className="md:col-span-7 md:row-span-2 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-6 uppercase tracking-wider text-sm">Income Allocation Model</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+            <div className="bg-emerald-50/50 dark:bg-emerald-500/5 p-6 rounded-[24px] border border-emerald-100/50 dark:border-emerald-500/10 flex flex-col justify-center">
+              <p className="text-emerald-600 dark:text-emerald-400 font-semibold mb-1 text-sm tracking-wide uppercase">Safe to Spend (60%)</p>
+              <p className="text-3xl font-extrabold text-emerald-700 dark:text-emerald-300 mb-6">Rs {((budgetEssentials + budgetRewards) - (spentEssentials + spentRewards)).toFixed(2)}</p>
+              <div className="space-y-3 text-sm text-emerald-800 dark:text-emerald-200/70">
+                <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
+                  <span className="font-medium">Essentials (50%)</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetEssentials - spentEssentials).toFixed(0)}</span>
+                </div>
+                <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
+                  <span className="font-medium">Rewards (10%)</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetRewards - spentRewards).toFixed(0)}</span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span>Rewards (10%)</span>
-                <span>Spent: {spentRewards} / {budgetRewards}</span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetRewards - spentRewards).toFixed(2)} left</span>
+            </div>
+            <div className="bg-blue-50/50 dark:bg-blue-500/5 p-6 rounded-[24px] border border-blue-100/50 dark:border-blue-500/10 flex flex-col justify-center">
+              <p className="text-blue-600 dark:text-blue-400 font-semibold mb-1 text-sm tracking-wide uppercase">Invest & Save (40%)</p>
+              <p className="text-3xl font-extrabold text-gray-800 dark:text-white mb-6">Rs {((budgetGrowth + budgetStability) - (spentGrowth + spentStability)).toFixed(2)}</p>
+              <div className="space-y-3 text-sm text-gray-800 dark:text-gray-300">
+                <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
+                  <span className="font-medium">Growth (25%)</span>
+                  <span className="font-bold text-blue-600 dark:text-blue-400">Rs {(budgetGrowth - spentGrowth).toFixed(0)}</span>
+                </div>
+                <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
+                  <span className="font-medium">Stability (15%)</span>
+                  <span className="font-bold text-blue-600 dark:text-blue-400">Rs {(budgetStability - spentStability).toFixed(0)}</span>
+                </div>
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 dark:bg-gray-900/20 p-6 rounded-2xl border border-gray-100 dark:border-gray-800/30">
-            <p className="text-blue-600 dark:text-blue-400 font-medium mb-1">Invest & Save (40%)</p>
-            <p className="text-3xl font-bold text-gray-700 dark:text-gray-300 mb-4">Rs {((budgetGrowth + budgetStability) - (spentGrowth + spentStability)).toFixed(2)} left</p>
-            <div className="space-y-2 text-sm text-gray-800 dark:text-gray-200/70 border-t border-gray-200/50 dark:border-gray-800/50 pt-4">
-              <div className="flex justify-between">
-                <span>Growth (25%)</span>
-                <span>Spent: {spentGrowth} / {budgetGrowth}</span>
-                <span className="font-bold text-gray-600 dark:text-gray-400">Rs {(budgetGrowth - spentGrowth).toFixed(2)} left</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Stability (15%)</span>
-                <span>Spent: {spentStability} / {budgetStability}</span>
-                <span className="font-bold text-gray-600 dark:text-gray-400">Rs {(budgetStability - spentStability).toFixed(2)} left</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 h-[32rem] transition-colors cursor-default">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-8">Expenses by Category</h2>
+        <motion.div whileHover={{ scale: 1.005 }} className="md:col-span-5 md:row-span-2 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-4 uppercase tracking-wider text-sm">Expenses by Category</h2>
           {expenseData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={expenseData}
-                  cx="50%"
-                  cy="45%"
-                  innerRadius={110}
-                  outerRadius={160}
-                  paddingAngle={4}
-                  dataKey="value"
-                  stroke="none"
-                  cornerRadius={8}
-                >
-                  {expenseData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <RechartsTooltip 
-                  formatter={(value: any) => `Rs ${Number(value).toFixed(2)}`}
-                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.1)', padding: '12px 20px', fontWeight: 600 }}
-                />
-                <Legend verticalAlign="bottom" height={40} iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="flex-1 min-h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={expenseData} cx="50%" cy="50%" innerRadius="65%" outerRadius="90%" paddingAngle={5} dataKey="value" stroke="none" cornerRadius={12}>
+                    {expenseData.map((_entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip formatter={(value: any) => `Rs ${Number(value).toFixed(2)}`} contentStyle={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(15,23,42,0.9)', color: '#fff', boxShadow: '0 10px 25px -5px rgb(0 0 0 / 0.5)', padding: '12px 20px', fontWeight: 600 }} itemStyle={{ color: '#fff' }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           ) : (
-            <div className="flex flex-col h-full items-center justify-center text-gray-400 dark:text-gray-500 pb-12">
-              <svg className="w-16 h-16 mb-4 text-gray-200 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path></svg>
-              <p>No expenses logged yet.</p>
+            <div className="flex flex-col flex-1 items-center justify-center text-gray-400 pb-8">
+              <p>No expenses logged.</p>
             </div>
           )}
         </motion.div>
 
-        <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 h-[32rem] transition-colors overflow-hidden flex flex-col">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white">Recent Transactions</h2>
-            <div className="flex flex-wrap gap-2">
+        {/* Row 4: Wide Transaction List */}
+        <motion.div whileHover={{ scale: 1.002 }} className="md:col-span-12 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white uppercase tracking-wider text-sm">Recent Transactions</h2>
+            <div className="flex flex-wrap gap-2 p-1 bg-gray-100/50 dark:bg-black/30 rounded-2xl">
               {['All', 'Essentials', 'Rewards', 'Growth', 'Stability'].map(bucket => (
-                <button
-                  key={bucket}
-                  onClick={() => setFilterBucket(bucket)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${filterBucket === bucket ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 dark:shadow-none' : 'bg-white/50 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:bg-white dark:hover:bg-slate-700'}`}
-                >
+                <button key={bucket} onClick={() => setFilterBucket(bucket)} className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${filterBucket === bucket ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}>
                   {bucket}
                 </button>
               ))}
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-            <div className="space-y-4">
-              {(() => {
-                const recentTx = transactions
-                  .filter(t => {
-                    if (filterBucket === 'All') return true;
-                    const cat = categories.find(c => c.id === t.categoryId);
-                    return cat?.allocationBucket === filterBucket;
-                  })
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                  .slice(0, 8);
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {(() => {
+              const recentTx = transactions
+                .filter(t => filterBucket === 'All' || categories.find(c => c.id === t.categoryId)?.allocationBucket === filterBucket)
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .slice(0, 8);
 
-                if (recentTx.length === 0) {
-                  return (
-                    <div className="flex flex-col h-full items-center justify-center text-gray-400 dark:text-gray-500 pt-20">
-                      <p>No recent transactions in this category.</p>
-                    </div>
-                  );
-                }
+              if (recentTx.length === 0) return <div className="col-span-full py-12 text-center text-gray-400">No transactions found.</div>;
 
-                return recentTx.map(tx => {
-                  const Icon = getCategoryIcon(tx.categoryName || '');
-                  return (
-                    <motion.div whileHover={{ scale: 1.02, x: 4 }} key={tx.id} className="flex items-center justify-between p-4 bg-white/50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700/50 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${tx.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                          <Icon size={20} />
-                        </div>
-                        <div>
-                          <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.description}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{tx.date} • {tx.categoryName}</p>
-                        </div>
+              return recentTx.map(tx => {
+                const Icon = getCategoryIcon(tx.categoryName || '');
+                return (
+                  <motion.div whileHover={{ scale: 1.01, y: -2 }} key={tx.id} className="flex items-center justify-between p-5 bg-white/40 dark:bg-slate-800/30 rounded-2xl border border-gray-100 dark:border-white/5 transition-all hover:bg-white/80 dark:hover:bg-slate-800/60">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-12 rounded-[16px] flex items-center justify-center ${tx.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700/50 dark:text-slate-300'}`}>
+                        <Icon size={22} />
                       </div>
-                      <p className={`font-bold ${tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
-                        {tx.type === 'income' ? '+' : '-'} Rs {tx.amount.toFixed(2)}
-                      </p>
-                    </motion.div>
-                  );
-                });
-              })()}
-            </div>
+                      <div>
+                        <p className="font-bold text-gray-900 dark:text-white">{tx.description}</p>
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{tx.date} • {tx.categoryName}</p>
+                      </div>
+                    </div>
+                    <p className={`font-bold text-lg ${tx.type === 'income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
+                      {tx.type === 'income' ? '+' : '-'} Rs {tx.amount.toFixed(2)}
+                    </p>
+                  </motion.div>
+                );
+              });
+            })()}
           </div>
         </motion.div>
+
       </div>
     </motion.div>
   );

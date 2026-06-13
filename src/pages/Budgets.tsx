@@ -85,7 +85,7 @@ export default function Budgets({ currentMonth }: { currentMonth: string }) {
         </div>
       </div>
 
-      <div className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 p-8 mb-10 transition-colors">
+      <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl rounded-[32px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-white/5 p-8 mb-10 transition-colors flex flex-col">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Create New Category</h2>
         <form onSubmit={handleAddCategory} className="flex flex-col md:flex-row gap-4 items-end">
           <div className="flex-1 w-full">
@@ -140,7 +140,7 @@ export default function Budgets({ currentMonth }: { currentMonth: string }) {
           const isOver = remaining < 0;
 
           return (
-            <div key={cat.id} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 p-8 hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+            <div key={cat.id} className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl rounded-[32px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-white/5 p-8 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(59,130,246,0.1)] transition-all duration-300">
               <div className="flex justify-between items-center mb-6">
                 {editingId === cat.id ? (
                   <div className="flex gap-2 items-center flex-1 mr-4">

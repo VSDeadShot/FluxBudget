@@ -10,7 +10,7 @@ export default function Sidebar({ isDark, toggleDark, currentMonth, setCurrentMo
   ];
 
   return (
-    <div className="w-72 bg-transparent dark:bg-slate-900/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-slate-800/50 h-screen p-6 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-none z-10 relative transition-colors duration-300">
+    <div className="w-72 bg-transparent dark:bg-[#050505]/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-white/5 h-screen p-6 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-none z-10 relative transition-colors duration-300">
       <div className="flex items-center space-x-3 mb-12 pl-2">
         <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-none">
           <Wallet className="w-6 h-6 text-white" />

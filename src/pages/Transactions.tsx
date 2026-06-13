@@ -129,7 +129,7 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
       <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-2 transition-colors">Transactions</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-10 transition-colors">Log your expenses and income.</p>
       
-      <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 p-8 mb-10 transition-colors">
+      <motion.div whileHover={{ scale: 1.002 }} className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl rounded-[32px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-white/5 p-8 mb-10 transition-colors flex flex-col">
         <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-6">Add New Transaction</h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           <div>
@@ -169,10 +169,10 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
         </div>
       </div>
 
-      <motion.div whileHover={{ scale: 1.005 }} className="bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)] border border-white/50 dark:border-slate-700/50 overflow-hidden transition-colors">
+      <motion.div whileHover={{ scale: 1.002 }} className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl rounded-[32px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none border border-white/50 dark:border-white/5 overflow-hidden transition-colors">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50/50 dark:bg-slate-900/30 border-b border-gray-200/50 dark:border-slate-700/50 backdrop-blur-sm">
+            <tr className="bg-gray-50/50 dark:bg-black/20 border-b border-gray-200/50 dark:border-white/5 backdrop-blur-sm">
               <th className="p-6 font-medium text-gray-600 dark:text-gray-400">
                 <button onClick={() => { setSortField('date'); setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc'); }} className="flex items-center gap-2 hover:text-gray-600 transition-colors">
                   Date <ArrowUpDown size={14} className={sortField === 'date' ? 'text-gray-500' : 'text-gray-300'} />
@@ -190,7 +190,7 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
           </thead>
           <tbody>
             {processedTransactions.map(tx => editingTxId === tx.id ? (
-              <tr key={tx.id} className="border-b border-gray-100 dark:border-slate-700/50 bg-gray-50/50 dark:bg-gray-900/20">
+              <tr key={tx.id} className="border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-black/30">
                 <td className="p-4"><input type="date" value={editDate} onChange={e=>setEditDate(e.target.value)} className="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-600 outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:text-white text-sm"/></td>
                 <td className="p-4"><input type="text" value={editDesc} onChange={e=>setEditDesc(e.target.value)} className="w-full p-2 border rounded-lg dark:bg-slate-800 dark:border-slate-600 outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:text-white text-sm"/></td>
                 <td className="p-4">
@@ -207,7 +207,7 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
                 </td>
               </tr>
             ) : (
-              <tr key={tx.id} className="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors">
+              <tr key={tx.id} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-slate-800/40 transition-colors">
                 <td className="p-6 text-gray-600 dark:text-gray-400">{tx.date}</td>
                 <td className="p-6 text-gray-900 dark:text-gray-200 font-medium">{tx.description}</td>
                 <td className="p-6">

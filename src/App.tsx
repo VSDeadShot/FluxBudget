@@ -30,7 +30,7 @@ function App() {
   }, [isDark]);
 
   return (
-    <div className="flex h-screen bg-amber-50 dark:bg-slate-950 overflow-hidden font-sans text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div className="flex h-screen bg-amber-50 dark:bg-[#050505] overflow-hidden font-sans text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <Sidebar isDark={isDark} toggleDark={() => setIsDark(!isDark)} currentMonth={currentMonth} setCurrentMonth={setCurrentMonth} />
       <main className="flex-1 overflow-y-auto p-8 lg:p-12 relative">
         <AnimatePresence mode="wait">
