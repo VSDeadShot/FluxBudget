@@ -2,7 +2,7 @@ import './polyfill';
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
-import { initDB, getCategories, getTransactions, addTransaction, updateBudget, addCategory, deleteTransaction, deleteCategory, updateTransaction, updateCategory, generateCSV, importCSV } from './database';
+import { initDB, getCategories, getTransactions, addTransaction, updateBudget, addCategory, deleteTransaction, deleteCategory, updateTransaction, updateCategory, generateCSV, importCSV, getGoals, addGoal, updateGoal, deleteGoal } from './database';
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -34,6 +34,11 @@ app.whenReady().then(() => {
   ipcMain.handle('delete-category', (_event, id) => deleteCategory(id));
   ipcMain.handle('update-transaction', (_event, tx) => updateTransaction(tx));
   ipcMain.handle('update-category', (_event, cat) => updateCategory(cat));
+  
+  ipcMain.handle('get-goals', () => getGoals());
+  ipcMain.handle('add-goal', (_event, name, targetAmount, color, deadline) => addGoal(name, targetAmount, color, deadline));
+  ipcMain.handle('update-goal', (_event, id, currentAmount) => updateGoal(id, currentAmount));
+  ipcMain.handle('delete-goal', (_event, id) => deleteGoal(id));
   
   ipcMain.handle('export-data', async (event) => {
     const win = BrowserWindow.fromWebContents(event.sender);

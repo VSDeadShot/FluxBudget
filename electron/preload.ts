@@ -10,6 +10,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteCategory: (id: number) => ipcRenderer.invoke('delete-category', id),
   updateTransaction: (tx: any) => ipcRenderer.invoke('update-transaction', tx),
   updateCategory: (cat: any) => ipcRenderer.invoke('update-category', cat),
+  getGoals: () => ipcRenderer.invoke('get-goals'),
+  addGoal: (name: string, targetAmount: number, color: string, deadline: string) => ipcRenderer.invoke('add-goal', name, targetAmount, color, deadline),
+  updateGoal: (id: number, currentAmount: number) => ipcRenderer.invoke('update-goal', id, currentAmount),
+  deleteGoal: (id: number) => ipcRenderer.invoke('delete-goal', id),
   exportData: () => ipcRenderer.invoke('export-data'),
   importData: () => ipcRenderer.invoke('import-data'),
 });

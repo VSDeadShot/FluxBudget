@@ -15,3 +15,12 @@ export interface Transaction {
   amount: number;
   type: 'income' | 'expense';
 }
+
+export interface Goal {
+  id: number;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string;
+  color?: string;
+}

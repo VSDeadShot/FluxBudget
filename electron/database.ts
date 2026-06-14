@@ -25,16 +25,28 @@ interface Transaction {
   type: string;
 }
 
+interface Goal {
+  id: number;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline?: string;
+  color?: string;
+}
+
 interface DBData {
   categories: Category[];
   transactions: Transaction[];
+  goals: Goal[];
 }
 
 function readDB(): DBData {
   if (!fs.existsSync(dbPath)) {
-    return { categories: [], transactions: [] };
+    return { categories: [], transactions: [], goals: [] };
   }
   const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+  
+  if (!data.goals) data.goals = [];
   
   // Cleanup script: Remove auto-generated categories to declutter the user's DB
   const badCats = ['Growth', 'Rewards', 'Stability', 'Essentials'];
@@ -144,6 +156,33 @@ export function updateCategory(cat: any) {
     data.categories[index] = cat;
     writeDB(data);
   }
+}
+
+export function getGoals() {
+  return readDB().goals;
+}
+
+export function addGoal(name: string, targetAmount: number, color: string, deadline: string) {
+  const data = readDB();
+  const newId = data.goals.length > 0 ? Math.max(...data.goals.map((g: Goal) => g.id)) + 1 : 1;
+  data.goals.push({ id: newId, name, targetAmount, currentAmount: 0, color, deadline });
+  writeDB(data);
+  return newId;
+}
+
+export function updateGoal(id: number, currentAmount: number) {
+  const data = readDB();
+  const index = data.goals.findIndex((g: Goal) => g.id === id);
+  if (index !== -1) {
+    data.goals[index].currentAmount = currentAmount;
+    writeDB(data);
+  }
+}
+
+export function deleteGoal(id: number) {
+  const data = readDB();
+  data.goals = data.goals.filter((g: Goal) => g.id !== id);
+  writeDB(data);
 }
 
 export function generateCSV(): string {
