@@ -1,14 +1,15 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Receipt, Wallet, Moon, Sun, Download, Upload } from 'lucide-react';
+import { LayoutDashboard, Receipt, Wallet, Moon, Sun, Download, Upload, Target } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-import appIcon from '../../public/icon.png';
+import appIcon from '../assets/icon.png';
 
 export default function Sidebar({ isDark, toggleDark, currentMonth, setCurrentMonth }: { isDark: boolean, toggleDark: () => void, currentMonth: string, setCurrentMonth: (m: string) => void }) {
   const links = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/transactions', icon: Receipt, label: 'Transactions' },
     { to: '/budgets', icon: Wallet, label: 'Budgets' },
+    { to: '/goals', icon: Target, label: 'Savings Goals' },
   ];
 
   return (

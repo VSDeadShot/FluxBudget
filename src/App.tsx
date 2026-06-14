@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Budgets from './pages/Budgets';
+import Goals from './pages/Goals';
 
 function App() {
   const [isDark, setIsDark] = useState(() => {
@@ -38,6 +39,7 @@ function App() {
             <Route path="/" element={<Dashboard currentMonth={currentMonth} />} />
             <Route path="/transactions" element={<Transactions currentMonth={currentMonth} />} />
             <Route path="/budgets" element={<Budgets currentMonth={currentMonth} />} />
+            <Route path="/goals" element={<Goals />} />
           </Routes>
         </AnimatePresence>
       </main>

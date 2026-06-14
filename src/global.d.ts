@@ -1,4 +1,4 @@
-import { Category, Transaction } from './types';
+import { Category, Transaction, Goal } from './types';
 
 declare global {
   interface Window {
@@ -12,6 +12,10 @@ declare global {
       deleteCategory: (id: number) => Promise<void>;
       updateTransaction: (tx: any) => Promise<void>;
       updateCategory: (cat: any) => Promise<void>;
+      getGoals: () => Promise<Goal[]>;
+      addGoal: (name: string, targetAmount: number, color: string, deadline: string) => Promise<number>;
+      updateGoal: (id: number, currentAmount: number) => Promise<void>;
+      deleteGoal: (id: number) => Promise<void>;
       exportData: () => Promise<boolean>;
       importData: () => Promise<boolean>;
     };
