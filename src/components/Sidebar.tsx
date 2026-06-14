@@ -2,6 +2,8 @@ import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Receipt, Wallet, Moon, Sun, Download, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+import appIcon from '../../public/icon.png';
+
 export default function Sidebar({ isDark, toggleDark, currentMonth, setCurrentMonth }: { isDark: boolean, toggleDark: () => void, currentMonth: string, setCurrentMonth: (m: string) => void }) {
   const links = [
     { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -12,9 +14,7 @@ export default function Sidebar({ isDark, toggleDark, currentMonth, setCurrentMo
   return (
     <div className="w-72 bg-transparent dark:bg-[#050505]/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-white/5 h-screen p-6 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] dark:shadow-none z-10 relative transition-colors duration-300">
       <div className="flex items-center space-x-3 mb-12 pl-2">
-        <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-none">
-          <Wallet className="w-6 h-6 text-white" />
-        </div>
+        <img src={appIcon} alt="FluxBudget Logo" className="w-10 h-10 rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.1)] object-cover" />
         <div className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">FluxBudget</div>
       </div>
       
