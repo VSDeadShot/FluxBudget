@@ -16,6 +16,19 @@ export default function Budgets({ currentMonth }: { currentMonth: string }) {
   const [newCatBucket, setNewCatBucket] = useState<'Essentials' | 'Rewards' | 'Growth' | 'Stability' | 'None'>('Essentials');
 
   useEffect(() => {
+    const name = newCatName.toLowerCase();
+    if (['rent', 'grocery', 'groceries', 'food', 'transport', 'gas', 'fuel', 'utility', 'utilities', 'bill', 'water', 'electricity', 'health', 'medical', 'insurance', 'car'].some(k => name.includes(k))) {
+      setNewCatBucket('Essentials');
+    } else if (['game', 'gaming', 'subscription', 'netflix', 'spotify', 'movie', 'entertainment', 'restaurant', 'dining', 'coffee', 'shopping', 'clothing', 'vacation', 'travel', 'hobby', 'fun'].some(k => name.includes(k))) {
+      setNewCatBucket('Rewards');
+    } else if (['stock', 'crypto', 'invest', 'savings', 'bond', 'mutual fund', 'growth', 'education', 'course', 'book', 'learn'].some(k => name.includes(k))) {
+      setNewCatBucket('Growth');
+    } else if (['emergency', 'debt', 'loan', 'credit', 'mortgage', 'stability', 'buffer', 'payoff'].some(k => name.includes(k))) {
+      setNewCatBucket('Stability');
+    }
+  }, [newCatName]);
+
+  useEffect(() => {
     loadData();
   }, []);
 
