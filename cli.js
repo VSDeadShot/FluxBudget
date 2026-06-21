@@ -71,6 +71,40 @@ if (command === 'status') {
   console.log(`\n✅ Logged Rs ${amount} for "${desc}"`);
   console.log(`Categorized automatically as [${category.name}] (${mappedBucket})\n`);
 
+} else if (command === 'income') {
+  const amount = parseFloat(args[1]);
+  const desc = args.slice(2).join(' ') || 'Income Entry';
+  
+  if (isNaN(amount) || amount <= 0) {
+    console.error('Usage: fluxbudget income <amount> <description...>');
+    console.error('Example: fluxbudget income 55000 Salary');
+    process.exit(1);
+  }
+
+  // Find the first income category (e.g. Salary)
+  let category = data.categories.find(c => c.type === 'income');
+  if (!category) {
+    const newCatId = data.categories.length > 0 ? Math.max(...data.categories.map(c => c.id)) + 1 : 1;
+    category = { id: newCatId, name: 'Income', budget: 0, type: 'income', allocationBucket: 'None' };
+    data.categories.push(category);
+  }
+
+  const newTxId = data.transactions.length > 0 ? Math.max(...data.transactions.map(t => t.id)) + 1 : 1;
+  const newTx = {
+    id: newTxId,
+    date: new Date().toISOString().split('T')[0],
+    description: desc,
+    categoryId: category.id,
+    amount: amount,
+    type: 'income'
+  };
+
+  data.transactions.push(newTx);
+  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf-8');
+  
+  console.log(`\n💰 Successfully Logged Income: +Rs ${amount} for "${desc}"`);
+  console.log(`Categorized under [${category.name}]\n`);
+
 } else {
   console.log(`
 FluxBudget CLI
@@ -78,9 +112,10 @@ FluxBudget CLI
 Usage:
   fluxbudget status                     - View current month's income, expenses, and balance
   fluxbudget log <amount> <description> - Log an expense instantly (auto-categorized!)
+  fluxbudget income <amount> <desc>     - Log an income/salary instantly
   
 Example:
   fluxbudget log 250 Spotify Subscription
-  fluxbudget log 1500 Groceries
+  fluxbudget income 55000 Monthly Salary
 `);
 }
