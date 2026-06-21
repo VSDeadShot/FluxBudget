@@ -105,6 +105,24 @@ if (command === 'status') {
   console.log(`\n💰 Successfully Logged Income: +Rs ${amount} for "${desc}"`);
   console.log(`Categorized under [${category.name}]\n`);
 
+} else if (command === 'history') {
+  console.log(`\n=== 5 Most Recent Transactions ===`);
+  const sortedTxs = [...data.transactions].sort((a, b) => b.id - a.id).slice(0, 5);
+  
+  if (sortedTxs.length === 0) {
+    console.log("No transactions found.");
+  } else {
+    sortedTxs.forEach(tx => {
+      const cat = data.categories.find(c => c.id === tx.categoryId);
+      const catName = cat ? cat.name : 'Unknown';
+      const typeIcon = tx.type === 'income' ? '🟢' : '🔴';
+      const sign = tx.type === 'income' ? '+' : '-';
+      
+      console.log(`${typeIcon} ${tx.date} | ${tx.description.padEnd(25).substring(0, 25)} | [${catName}]`.padEnd(55) + `${sign}Rs ${tx.amount.toFixed(2)}`);
+    });
+  }
+  console.log();
+
 } else {
   console.log(`
 FluxBudget CLI
@@ -113,6 +131,7 @@ Usage:
   fluxbudget status                     - View current month's income, expenses, and balance
   fluxbudget log <amount> <description> - Log an expense instantly (auto-categorized!)
   fluxbudget income <amount> <desc>     - Log an income/salary instantly
+  fluxbudget history                    - View your 5 most recent transactions
   
 Example:
   fluxbudget log 250 Spotify Subscription
