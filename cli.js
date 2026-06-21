@@ -123,6 +123,23 @@ if (command === 'status') {
   }
   console.log();
 
+} else if (command === 'goals') {
+  console.log(`\n=== Savings Goals ===`);
+  if (!data.goals || data.goals.length === 0) {
+    console.log("No savings goals found.");
+  } else {
+    data.goals.forEach(g => {
+      const percentage = g.targetAmount > 0 ? Math.min(100, Math.round((g.currentAmount / g.targetAmount) * 100)) : 0;
+      
+      const barLength = 20;
+      const filled = Math.round((percentage / 100) * barLength);
+      const bar = '█'.repeat(filled) + '░'.repeat(barLength - filled);
+      
+      console.log(`🎯 ${g.name.padEnd(25)} [${bar}] ${percentage}%`);
+      console.log(`   Rs ${g.currentAmount.toFixed(2)} / Rs ${g.targetAmount.toFixed(2)}\n`);
+    });
+  }
+
 } else {
   console.log(`
 FluxBudget CLI
@@ -132,6 +149,7 @@ Usage:
   fluxbudget log <amount> <description> - Log an expense instantly (auto-categorized!)
   fluxbudget income <amount> <desc>     - Log an income/salary instantly
   fluxbudget history                    - View your 5 most recent transactions
+  fluxbudget goals                      - View progress bars for your Savings Goals
   
 Example:
   fluxbudget log 250 Spotify Subscription
