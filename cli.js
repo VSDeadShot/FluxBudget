@@ -169,6 +169,38 @@ if (command === 'status') {
   console.log(`\n📄 Successfully exported ${data.transactions.length} transactions!`);
   console.log(`Saved to: ${exportPath}\n`);
 
+} else if (command === 'buckets') {
+  const currentMonth = new Date().toISOString().slice(0, 7);
+  const txs = data.transactions.filter(t => t.date.startsWith(currentMonth));
+  
+  const totalIncome = txs.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+  
+  const rules = {
+    'Essentials': 0.50,
+    'Growth': 0.25,
+    'Stability': 0.15,
+    'Rewards': 0.10
+  };
+  
+  console.log(`\n=== 50/30/20 Bucket Breakdown ===`);
+  console.log(`Total Income: Rs ${totalIncome.toFixed(2)}\n`);
+  
+  Object.keys(rules).forEach(bucket => {
+    const allocated = totalIncome * rules[bucket];
+    
+    // Find categories in this bucket
+    const bucketCatIds = data.categories.filter(c => c.allocationBucket === bucket).map(c => c.id);
+    
+    // Sum expenses in these categories
+    const spent = txs.filter(t => t.type === 'expense' && bucketCatIds.includes(t.categoryId)).reduce((sum, t) => sum + t.amount, 0);
+    
+    const remaining = allocated - spent;
+    const statusIcon = remaining >= 0 ? '🟢' : '🔴';
+    
+    console.log(`${statusIcon} ${bucket.padEnd(12)} | Allocated: Rs ${allocated.toFixed(2).padEnd(8)} | Spent: Rs ${spent.toFixed(2).padEnd(8)} | Left: Rs ${remaining.toFixed(2)}`);
+  });
+  console.log();
+
 } else {
   console.log(`
 FluxBudget CLI
@@ -181,6 +213,7 @@ Usage:
   fluxbudget goals                      - View progress bars for your Savings Goals
   fluxbudget undo                       - Instantly delete your most recently logged transaction
   fluxbudget export                     - Generate a CSV backup of your transactions in the current folder
+  fluxbudget buckets                    - View your 50/30/20 breakdown and remaining budget
   
 Example:
   fluxbudget log 250 Spotify Subscription
