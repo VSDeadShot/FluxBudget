@@ -31,6 +31,9 @@ npm link
 | `fluxbudget income <amount> <desc>`| Quickly logs incoming cash/salary. (e.g. `fluxbudget income 55000 Monthly Salary`) |
 | `fluxbudget history` | Prints a beautifully formatted table of your 5 most recent transactions. |
 | `fluxbudget goals` | Renders cool ASCII progress bars `[██████░░░]` showing how close you are to hitting your Savings Goals! |
+| `fluxbudget undo` | Acts as an "Undo" button to instantly delete your most recently logged transaction. |
+| `fluxbudget export` | Generates a clean CSV backup file of your entire ledger directly into your current directory. |
+| `fluxbudget buckets` | Prints your 50/30/20 breakdown, showing exactly how much of your allocated budget remains. |
 
 ---
 
