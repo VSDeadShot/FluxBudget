@@ -140,6 +140,19 @@ if (command === 'status') {
     });
   }
 
+} else if (command === 'undo') {
+  if (!data.transactions || data.transactions.length === 0) {
+    console.log(`\n❌ No transactions to undo.\n`);
+  } else {
+    // Find the highest ID (most recently created)
+    const lastTx = [...data.transactions].sort((a, b) => b.id - a.id)[0];
+    data.transactions = data.transactions.filter(t => t.id !== lastTx.id);
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf-8');
+    
+    const sign = lastTx.type === 'income' ? '+' : '-';
+    console.log(`\n⏪ Undid Transaction: ${sign}Rs ${lastTx.amount.toFixed(2)} for "${lastTx.description}"\n`);
+  }
+
 } else {
   console.log(`
 FluxBudget CLI
@@ -150,6 +163,7 @@ Usage:
   fluxbudget income <amount> <desc>     - Log an income/salary instantly
   fluxbudget history                    - View your 5 most recent transactions
   fluxbudget goals                      - View progress bars for your Savings Goals
+  fluxbudget undo                       - Instantly delete your most recently logged transaction
   
 Example:
   fluxbudget log 250 Spotify Subscription
