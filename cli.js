@@ -153,6 +153,22 @@ if (command === 'status') {
     console.log(`\n⏪ Undid Transaction: ${sign}Rs ${lastTx.amount.toFixed(2)} for "${lastTx.description}"\n`);
   }
 
+} else if (command === 'export') {
+  const header = "ID,Date,Description,Category,Type,Amount\n";
+  const rows = data.transactions.map(tx => {
+    const cat = data.categories.find(c => c.id === tx.categoryId);
+    const catName = cat ? cat.name : 'Unknown';
+    const desc = `"${tx.description.replace(/"/g, '""')}"`;
+    return `${tx.id},${tx.date},${desc},${catName},${tx.type},${tx.amount}`;
+  });
+  
+  const csvContent = header + rows.join('\n');
+  const exportPath = path.join(process.cwd(), 'fluxbudget_export.csv');
+  fs.writeFileSync(exportPath, csvContent, 'utf-8');
+  
+  console.log(`\n📄 Successfully exported ${data.transactions.length} transactions!`);
+  console.log(`Saved to: ${exportPath}\n`);
+
 } else {
   console.log(`
 FluxBudget CLI
@@ -164,6 +180,7 @@ Usage:
   fluxbudget history                    - View your 5 most recent transactions
   fluxbudget goals                      - View progress bars for your Savings Goals
   fluxbudget undo                       - Instantly delete your most recently logged transaction
+  fluxbudget export                     - Generate a CSV backup of your transactions in the current folder
   
 Example:
   fluxbudget log 250 Spotify Subscription
