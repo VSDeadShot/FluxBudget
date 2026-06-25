@@ -107,7 +107,7 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
 
         {/* Row 2/3: Complex Layout */}
         <motion.div whileHover={{ scale: 1.005 }} className="md:col-span-7 md:row-span-2 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-4">
             <h2 className="text-lg font-bold text-gray-800 dark:text-white uppercase tracking-wider text-sm">Income Allocation Model</h2>
             <select 
               value={budgetRule} 
@@ -124,6 +124,12 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
               <option value="70/20/10">Debt Crusher (70/20/10)</option>
             </select>
           </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 italic border-l-2 border-blue-500/30 pl-3">
+            {budgetRule === 'flux' && "A highly balanced approach focused heavily on wealth building (Growth) while keeping lifestyle creep (Rewards) in check."}
+            {budgetRule === '50/30/20' && "The gold standard of budgeting. 50% for Needs, 30% for Wants, and 20% strictly for Savings."}
+            {budgetRule === '80/20' && "Pay yourself first. Automatically save 20% of your income, and live off the remaining 80% guilt-free."}
+            {budgetRule === '70/20/10' && "The debt destroyer. 70% for daily living, 20% for saving, and an aggressive 10% strictly for crushing debt."}
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
             <div className="bg-emerald-50/50 dark:bg-emerald-500/5 p-6 rounded-[24px] border border-emerald-100/50 dark:border-emerald-500/10 flex flex-col justify-center">
               <p className="text-emerald-600 dark:text-emerald-400 font-semibold mb-1 text-sm tracking-wide uppercase">Safe to Spend ({((pE+pR)*100).toFixed(0)}%)</p>
