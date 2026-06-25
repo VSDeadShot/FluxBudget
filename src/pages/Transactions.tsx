@@ -13,6 +13,7 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
   const [description, setDescription] = useState('');
   const [amount, setAmount] = useState('');
   const [categoryId, setCategoryId] = useState('');
+  const [isRecurring, setIsRecurring] = useState(false);
 
   const [editingTxId, setEditingTxId] = useState<number | null>(null);
   const [editDate, setEditDate] = useState('');
@@ -75,10 +76,12 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
       amount: parseFloat(amount),
       categoryId: Number(categoryId),
       type: selectedCat.type,
+      isRecurring
     });
     
     setDescription('');
     setAmount('');
+    setIsRecurring(false);
     toast.success('Transaction added!');
     loadData();
   }
@@ -154,6 +157,10 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
             </div>
           </div>
         </form>
+        <div className="mt-4 flex items-center gap-2">
+          <input type="checkbox" id="recur" checked={isRecurring} onChange={e => setIsRecurring(e.target.checked)} className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-gray-50 dark:bg-slate-800 border-gray-300 dark:border-slate-600" />
+          <label htmlFor="recur" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">Repeat Monthly (Autopilot)</label>
+        </div>
       </motion.div>
 
       <div className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
@@ -209,7 +216,10 @@ export default function Transactions({ currentMonth }: { currentMonth: string })
             ) : (
               <tr key={tx.id} className="border-b border-gray-100 dark:border-white/5 hover:bg-gray-50 dark:hover:bg-slate-800/40 transition-colors">
                 <td className="p-6 text-gray-600 dark:text-gray-400">{tx.date}</td>
-                <td className="p-6 text-gray-900 dark:text-gray-200 font-medium">{tx.description}</td>
+                <td className="p-6 text-gray-900 dark:text-gray-200 font-medium">
+                  {tx.description}
+                  {tx.isRecurring && <span className="ml-3 text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-md uppercase font-bold tracking-wider align-middle">Recurring</span>}
+                </td>
                 <td className="p-6">
                   {(() => {
                     const Icon = getCategoryIcon(tx.categoryName || '');

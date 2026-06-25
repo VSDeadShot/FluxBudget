@@ -102,6 +102,47 @@ export function getCategories() {
 
 export function getTransactions() {
   const data = readDB();
+  
+  // Auto-process recurring transactions
+  const today = new Date();
+  const currentMonthStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  let changed = false;
+
+  const pastRecurring = data.transactions.filter(t => t.isRecurring && !t.date.startsWith(currentMonthStr));
+  const uniqueRecurring = new Map();
+  pastRecurring.forEach(t => uniqueRecurring.set(`${t.description}-${t.amount}`, t));
+
+  uniqueRecurring.forEach(rtx => {
+    const exists = data.transactions.some(t => 
+      t.date.startsWith(currentMonthStr) && 
+      t.description === rtx.description && 
+      t.amount === rtx.amount &&
+      t.isRecurring === true
+    );
+
+    if (!exists) {
+      const triggerDay = parseInt(rtx.date.split('-')[2]);
+      if (today.getDate() >= triggerDay) {
+        const newId = data.transactions.length > 0 ? Math.max(...data.transactions.map(t => t.id)) + 1 : 1;
+        const d = new Date(today.getFullYear(), today.getMonth(), triggerDay);
+        const newDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        
+        data.transactions.push({
+          id: newId,
+          date: newDate,
+          description: rtx.description,
+          categoryId: rtx.categoryId,
+          amount: rtx.amount,
+          type: rtx.type,
+          isRecurring: true
+        });
+        changed = true;
+      }
+    }
+  });
+
+  if (changed) writeDB(data);
+
   const txs = data.transactions.map(tx => {
     const cat = data.categories.find(c => c.id === tx.categoryId);
     return { ...tx, categoryName: cat ? cat.name : 'Unknown' };
