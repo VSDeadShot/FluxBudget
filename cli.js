@@ -175,14 +175,22 @@ if (command === 'status') {
   
   const totalIncome = txs.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
   
+  const rule = data.settings?.budgetRule || 'flux';
+  
+  let pE = 0.5, pR = 0.1, pG = 0.25, pS = 0.15;
+  let ruleName = 'Flux Default (50/10/25/15)';
+  if (rule === '50/30/20') { pE = 0.5; pR = 0.3; pG = 0.1; pS = 0.1; ruleName = 'Classic 50/30/20'; }
+  else if (rule === '80/20') { pE = 0.6; pR = 0.2; pG = 0.1; pS = 0.1; ruleName = 'Aggressive Saver (80/20)'; }
+  else if (rule === '70/20/10') { pE = 0.6; pR = 0.1; pG = 0.2; pS = 0.1; ruleName = 'Debt Crusher (70/20/10)'; }
+  
   const rules = {
-    'Essentials': 0.50,
-    'Growth': 0.25,
-    'Stability': 0.15,
-    'Rewards': 0.10
+    'Essentials': pE,
+    'Growth': pG,
+    'Stability': pS,
+    'Rewards': pR
   };
   
-  console.log(`\n=== 50/30/20 Bucket Breakdown ===`);
+  console.log(`\n=== ${ruleName} Bucket Breakdown ===`);
   console.log(`Total Income: Rs ${totalIncome.toFixed(2)}\n`);
   
   Object.keys(rules).forEach(bucket => {

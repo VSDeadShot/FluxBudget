@@ -34,10 +34,15 @@ interface Goal {
   color?: string;
 }
 
+interface Settings {
+  budgetRule: string;
+}
+
 interface DBData {
   categories: Category[];
   transactions: Transaction[];
   goals: Goal[];
+  settings?: Settings;
 }
 
 function readDB(): DBData {
@@ -47,6 +52,7 @@ function readDB(): DBData {
   const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
   
   if (!data.goals) data.goals = [];
+  if (!data.settings) data.settings = { budgetRule: '50/30/20' };
   
   // Cleanup script: Remove auto-generated categories to declutter the user's DB
   const badCats = ['Growth', 'Rewards', 'Stability', 'Essentials'];
@@ -307,4 +313,14 @@ export function importCSV(filePath: string): boolean {
     console.error(e);
     return false;
   }
+}
+
+export function getSettings() {
+  return readDB().settings;
+}
+
+export function updateSettings(settings: any) {
+  const data = readDB();
+  data.settings = { ...data.settings, ...settings };
+  writeDB(data);
 }

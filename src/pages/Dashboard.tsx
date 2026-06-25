@@ -12,16 +12,19 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
   const [allTransactions, setAllTransactions] = useState<Transaction[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [filterBucket, setFilterBucket] = useState<string>('All');
+  const [budgetRule, setBudgetRule] = useState<string>('flux');
 
   useEffect(() => {
     async function loadData() {
       if (!window.electronAPI) return;
-      const [txData, catData] = await Promise.all([
+      const [txData, catData, settings] = await Promise.all([
         window.electronAPI.getTransactions(),
-        window.electronAPI.getCategories()
+        window.electronAPI.getCategories(),
+        window.electronAPI.getSettings()
       ]);
       setAllTransactions(txData);
       setCategories(catData);
+      if (settings?.budgetRule) setBudgetRule(settings.budgetRule);
     }
     loadData();
     loadData();
@@ -52,10 +55,15 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
   const spentGrowth = getSpentByBucket('Growth');
   const spentStability = getSpentByBucket('Stability');
 
-  const budgetEssentials = totalIncome * 0.5;
-  const budgetRewards = totalIncome * 0.1;
-  const budgetGrowth = totalIncome * 0.25;
-  const budgetStability = totalIncome * 0.15;
+  let pE = 0.5, pR = 0.1, pG = 0.25, pS = 0.15;
+  if (budgetRule === '50/30/20') { pE = 0.5; pR = 0.3; pG = 0.1; pS = 0.1; }
+  else if (budgetRule === '80/20') { pE = 0.6; pR = 0.2; pG = 0.1; pS = 0.1; }
+  else if (budgetRule === '70/20/10') { pE = 0.6; pR = 0.1; pG = 0.2; pS = 0.1; }
+
+  const budgetEssentials = totalIncome * pE;
+  const budgetRewards = totalIncome * pR;
+  const budgetGrowth = totalIncome * pG;
+  const budgetStability = totalIncome * pS;
 
   return (
     <motion.div 
@@ -99,32 +107,48 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
 
         {/* Row 2/3: Complex Layout */}
         <motion.div whileHover={{ scale: 1.005 }} className="md:col-span-7 md:row-span-2 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col">
-          <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-6 uppercase tracking-wider text-sm">Income Allocation Model</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white uppercase tracking-wider text-sm">Income Allocation Model</h2>
+            <select 
+              value={budgetRule} 
+              onChange={async (e) => {
+                const newRule = e.target.value;
+                setBudgetRule(newRule);
+                if (window.electronAPI) await window.electronAPI.updateSettings({ budgetRule: newRule });
+              }}
+              className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-3 py-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 outline-none focus:ring-2 focus:ring-blue-500 transition-colors shadow-sm dark:shadow-none cursor-pointer"
+            >
+              <option value="flux">Flux Default (50/10/25/15)</option>
+              <option value="50/30/20">Classic 50/30/20 Rule</option>
+              <option value="80/20">Aggressive Saver (80/20)</option>
+              <option value="70/20/10">Debt Crusher (70/20/10)</option>
+            </select>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
             <div className="bg-emerald-50/50 dark:bg-emerald-500/5 p-6 rounded-[24px] border border-emerald-100/50 dark:border-emerald-500/10 flex flex-col justify-center">
-              <p className="text-emerald-600 dark:text-emerald-400 font-semibold mb-1 text-sm tracking-wide uppercase">Safe to Spend (60%)</p>
+              <p className="text-emerald-600 dark:text-emerald-400 font-semibold mb-1 text-sm tracking-wide uppercase">Safe to Spend ({((pE+pR)*100).toFixed(0)}%)</p>
               <p className="text-3xl font-extrabold text-emerald-700 dark:text-emerald-300 mb-6">Rs {((budgetEssentials + budgetRewards) - (spentEssentials + spentRewards)).toFixed(2)}</p>
               <div className="space-y-3 text-sm text-emerald-800 dark:text-emerald-200/70">
                 <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
-                  <span className="font-medium">Essentials (50%)</span>
+                  <span className="font-medium">Essentials ({(pE*100).toFixed(0)}%)</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetEssentials - spentEssentials).toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
-                  <span className="font-medium">Rewards (10%)</span>
+                  <span className="font-medium">Rewards ({(pR*100).toFixed(0)}%)</span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400">Rs {(budgetRewards - spentRewards).toFixed(0)}</span>
                 </div>
               </div>
             </div>
             <div className="bg-blue-50/50 dark:bg-blue-500/5 p-6 rounded-[24px] border border-blue-100/50 dark:border-blue-500/10 flex flex-col justify-center">
-              <p className="text-blue-600 dark:text-blue-400 font-semibold mb-1 text-sm tracking-wide uppercase">Invest & Save (40%)</p>
+              <p className="text-blue-600 dark:text-blue-400 font-semibold mb-1 text-sm tracking-wide uppercase">Invest & Save ({((pG+pS)*100).toFixed(0)}%)</p>
               <p className="text-3xl font-extrabold text-gray-800 dark:text-white mb-6">Rs {((budgetGrowth + budgetStability) - (spentGrowth + spentStability)).toFixed(2)}</p>
               <div className="space-y-3 text-sm text-gray-800 dark:text-gray-300">
                 <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
-                  <span className="font-medium">Growth (25%)</span>
+                  <span className="font-medium">Growth ({(pG*100).toFixed(0)}%)</span>
                   <span className="font-bold text-blue-600 dark:text-blue-400">Rs {(budgetGrowth - spentGrowth).toFixed(0)}</span>
                 </div>
                 <div className="flex justify-between items-center bg-white/40 dark:bg-black/20 p-3 rounded-xl">
-                  <span className="font-medium">Stability (15%)</span>
+                  <span className="font-medium">Stability ({(pS*100).toFixed(0)}%)</span>
                   <span className="font-bold text-blue-600 dark:text-blue-400">Rs {(budgetStability - spentStability).toFixed(0)}</span>
                 </div>
               </div>

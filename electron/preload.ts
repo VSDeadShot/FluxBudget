@@ -16,4 +16,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteGoal: (id: number) => ipcRenderer.invoke('delete-goal', id),
   exportData: () => ipcRenderer.invoke('export-data'),
   importData: () => ipcRenderer.invoke('import-data'),
+  getSettings: () => ipcRenderer.invoke('get-settings'),
+  updateSettings: (settings: any) => ipcRenderer.invoke('update-settings', settings),
 });

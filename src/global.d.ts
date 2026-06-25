@@ -18,6 +18,8 @@ declare global {
       deleteGoal: (id: number) => Promise<void>;
       exportData: () => Promise<boolean>;
       importData: () => Promise<boolean>;
+      getSettings: () => Promise<{budgetRule: string}>;
+      updateSettings: (settings: any) => Promise<void>;
     };
   }
 }
