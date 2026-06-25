@@ -199,6 +199,55 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
           </div>
         </motion.div>
 
+        {/* Row 5: Year in Review Heatmap */}
+        <motion.div whileHover={{ scale: 1.002 }} className="md:col-span-12 bg-white/70 dark:bg-slate-900/40 backdrop-blur-2xl p-8 rounded-[32px] border border-white/50 dark:border-white/5 shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:shadow-none transition-colors flex flex-col mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white uppercase tracking-wider text-sm">Year in Review Heatmap</h2>
+            <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
+              <span>Less</span>
+              <div className="w-3.5 h-3.5 rounded-[3px] bg-slate-100 dark:bg-slate-800/50"></div>
+              <div className="w-3.5 h-3.5 rounded-[3px] bg-blue-300 dark:bg-blue-500/40"></div>
+              <div className="w-3.5 h-3.5 rounded-[3px] bg-blue-500 dark:bg-blue-600/70"></div>
+              <div className="w-3.5 h-3.5 rounded-[3px] bg-blue-700 dark:bg-blue-500"></div>
+              <span>More</span>
+            </div>
+          </div>
+          
+          <div className="overflow-x-auto pb-4 custom-scrollbar">
+            <div className="grid grid-rows-7 grid-flow-col gap-[4px] min-w-max">
+              {(() => {
+                const spendMap = new Map();
+                allTransactions.filter(t => t.type === 'expense').forEach(t => {
+                  spendMap.set(t.date, (spendMap.get(t.date) || 0) + t.amount);
+                });
+                
+                const heatmapDays = Array.from({length: 364}, (_, i) => {
+                  const d = new Date();
+                  d.setDate(d.getDate() - (363 - i));
+                  return d.toISOString().split('T')[0];
+                });
+
+                return heatmapDays.map(d => {
+                  const spend = spendMap.get(d) || 0;
+                  let colorClass = 'bg-slate-100 dark:bg-slate-800/50';
+                  if (spend > 0) {
+                    if (spend < 500) colorClass = 'bg-blue-300 dark:bg-blue-500/40';
+                    else if (spend < 2000) colorClass = 'bg-blue-500 dark:bg-blue-600/70';
+                    else colorClass = 'bg-blue-700 dark:bg-blue-500';
+                  }
+                  return (
+                    <div 
+                      key={d} 
+                      title={`${d}: Rs ${spend.toFixed(2)}`} 
+                      className={`w-3.5 h-3.5 rounded-[3px] ${colorClass} hover:ring-2 ring-blue-400 dark:ring-blue-300 transition-all cursor-pointer`}
+                    ></div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        </motion.div>
+
       </div>
     </motion.div>
   );
