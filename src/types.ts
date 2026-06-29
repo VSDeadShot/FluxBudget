@@ -14,6 +14,7 @@ export interface Transaction {
   categoryName?: string;
   amount: number;
   type: 'income' | 'expense';
+  isRecurring?: boolean;
 }
 
 export interface Goal {
