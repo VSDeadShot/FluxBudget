@@ -243,37 +243,49 @@ export default function Dashboard({ currentMonth }: { currentMonth: string }) {
             </div>
           </div>
           
-          <div className="overflow-x-auto pb-4 custom-scrollbar">
-            <div className="grid grid-rows-7 grid-flow-col gap-[4px] min-w-max">
-              {(() => {
-                const spendMap = new Map();
-                allTransactions.filter(t => t.type === 'expense').forEach(t => {
-                  spendMap.set(t.date, (spendMap.get(t.date) || 0) + t.amount);
-                });
-                
-                const heatmapDays = Array.from({length: 364}, (_, i) => {
-                  const d = new Date();
-                  d.setDate(d.getDate() - (363 - i));
-                  return d.toISOString().split('T')[0];
-                });
+          <div className="flex gap-3">
+            <div className="flex flex-col gap-[4px] text-[10px] font-semibold text-gray-400 dark:text-gray-500 pt-[1px]">
+              <div className="h-3.5 flex items-center justify-end pr-1"></div>
+              <div className="h-3.5 flex items-center justify-end pr-1">Mon</div>
+              <div className="h-3.5 flex items-center justify-end pr-1"></div>
+              <div className="h-3.5 flex items-center justify-end pr-1">Wed</div>
+              <div className="h-3.5 flex items-center justify-end pr-1"></div>
+              <div className="h-3.5 flex items-center justify-end pr-1">Fri</div>
+              <div className="h-3.5 flex items-center justify-end pr-1"></div>
+            </div>
+            
+            <div className="overflow-x-auto pb-4 custom-scrollbar flex-1">
+              <div className="grid grid-rows-7 grid-flow-col gap-[4px] min-w-max">
+                {(() => {
+                  const spendMap = new Map();
+                  allTransactions.filter(t => t.type === 'expense').forEach(t => {
+                    spendMap.set(t.date, (spendMap.get(t.date) || 0) + t.amount);
+                  });
+                  
+                  const heatmapDays = Array.from({length: 364}, (_, i) => {
+                    const d = new Date();
+                    d.setDate(d.getDate() - (363 - i));
+                    return d.toISOString().split('T')[0];
+                  });
 
-                return heatmapDays.map(d => {
-                  const spend = spendMap.get(d) || 0;
-                  let colorClass = 'bg-slate-100 dark:bg-slate-800/50';
-                  if (spend > 0) {
-                    if (spend < 500) colorClass = 'bg-blue-300 dark:bg-blue-500/40';
-                    else if (spend < 2000) colorClass = 'bg-blue-500 dark:bg-blue-600/70';
-                    else colorClass = 'bg-blue-700 dark:bg-blue-500';
-                  }
-                  return (
-                    <div 
-                      key={d} 
-                      title={`${d}: Rs ${spend.toFixed(2)}`} 
-                      className={`w-3.5 h-3.5 rounded-[3px] ${colorClass} hover:ring-2 ring-blue-400 dark:ring-blue-300 transition-all cursor-pointer`}
-                    ></div>
-                  );
-                });
-              })()}
+                  return heatmapDays.map(d => {
+                    const spend = spendMap.get(d) || 0;
+                    let colorClass = 'bg-slate-100 dark:bg-slate-800/50';
+                    if (spend > 0) {
+                      if (spend < 500) colorClass = 'bg-blue-300 dark:bg-blue-500/40';
+                      else if (spend < 2000) colorClass = 'bg-blue-500 dark:bg-blue-600/70';
+                      else colorClass = 'bg-blue-700 dark:bg-blue-500';
+                    }
+                    return (
+                      <div 
+                        key={d} 
+                        title={`${d}: Rs ${spend.toFixed(2)}`} 
+                        className={`w-3.5 h-3.5 rounded-[3px] ${colorClass} hover:ring-2 ring-blue-400 dark:ring-blue-300 transition-all cursor-pointer`}
+                      ></div>
+                    );
+                  });
+                })()}
+              </div>
             </div>
           </div>
         </motion.div>
